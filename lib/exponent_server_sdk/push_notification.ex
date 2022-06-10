@@ -77,6 +77,20 @@ defmodule ExponentServerSdk.PushNotification do
     |> Keyword.put(:"Accepts-Encoding", "gzip, deflate")
     |> Keyword.put(:"Content-Encoding", "gzip")
     |> Keyword.put(:"Content-Type", "application/json")
+    |> put_access_token()
+  end
+
+  @doc """
+  Automatically adds the correct headers to each API request.
+  """
+
+  @spec put_access_token(keyword()) :: binary()
+  def put_access_token(headers) do
+    access_token = Application.get_env(:exponent_server_sdk, :access_token)
+
+    if access_token != nil,
+      do: Keyword.put(headers, :Authorization, "Bearer #{access_token}"),
+      else: headers
   end
 
   @doc """
