@@ -1,8 +1,9 @@
 ExponentServerSdk
 ========
-[![Hex.pm](https://img.shields.io/hexpm/v/exponent_server_sdk.svg)](https://hex.pm/packages/exponent_server_sdk)
-[![Build Status](https://travis-ci.org/rdrop/exponent-server-sdk-elixir.svg?branch=master)](https://travis-ci.org/rdrop/exponent-server-sdk-elixir)
-[![Inline docs](https://inch-ci.org/github/rdrop/exponent-server-sdk-elixir.svg?branch=master)](https://inch-ci.org/github/rdrop/exponent-server-sdk-elixir)
+
+**This is an oVice fork of the original [ExponentServerSdk](https://github.com/rdrop/exponent-server-sdk-elixir) project which is heavily outdated and does not support newer Elixir versions.**
+
+_Some tests may fail because the library doesn't mock API calls but executes them with incorrect tokens instead_
 
 Use to send push notifications to Exponent Experiences from an Elixir/Phoenix server.
 
@@ -10,21 +11,13 @@ Use to send push notifications to Exponent Experiences from an Elixir/Phoenix se
 
 ExponentServerSdk is currently able to push single and multiple messages to the Expo Server and retrieve message delivery statuses from a list of IDs.
 
-All HTTPoison Post Request body are automatically GZIP compressed
+All HTTPoison Post Request body are automatically GZIP compressed.
 
-You can install it from Hex:
-
-```elixir
-def deps do
-  [{:exponent_server_sdk, "~> 0.2.0"}]
-end
-```
-
-Or from Github:
+You can install from Github:
 
 ```elixir
 def deps do
-  [{:exponent_server_sdk, github: "rdrop/exponent-server-sdk-elixir"}]
+  [{:exponent_server_sdk, git: "https://github.com/oviceinc/exponent-server-sdk-elixir.git"}]
 end
 ```
 
@@ -34,11 +27,23 @@ Now, list the `:exponent_server_sdk` application as your application dependency:
 
 ```elixir
 def application do
-  [applications: [:exponent_server_sdk]]
+  [extra_applications: [:exponent_server_sdk]]
 end
+```
+## Fork's features
+
+This fork supports setting up an access token to be used as bearer token when communication with Expo's APIs. [More in here.](https://docs.expo.dev/push-notifications/sending-notifications/#additional-security)
+
+It's done by setting up a similar module config:
+
+```elixir
+config :exponent_server_sdk,
+       :access_token,
+       System.get_env("EXPO_ACCESS_TOKEN", "MY_ACCESS_TOKEN")
 ```
 
 ## Usage
+
 
 ### Notifications
 
@@ -96,7 +101,7 @@ ids = ["XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX", "YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYY
 {:ok, response} = ExponentServerSdk.PushNotification.get_receipts(ids)
 
 # Example Response
-{:ok,[ %{ "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX": { "status": "ok" }, "YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY": { "status": "ok" } } ]}
+{:ok,[ %{ "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX": %{ "status": "ok" }, "YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY": %{ "status": "ok" } } ]}
 ```
 
 The complete format of the messages can be found [here.](https://docs.expo.io/versions/latest/guides/push-notifications#message-format)
