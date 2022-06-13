@@ -1,7 +1,10 @@
 ExponentServerSdk
 ========
 
-**This is an oVice fork of the original [ExponentServerSdk](https://github.com/rdrop/exponent-server-sdk-elixir) project which is heavily outdated and does not support newer Elixir versions.**
+**This is an oVice fork of the original [ExponentServerSdk](https://github.com/rdrop/exponent-server-sdk-elixir) project which is heavily outdated and does not support newer Elixir versions**
+
+**The fork is just for making the library usable and adding the [access token feature](https://docs.expo.dev/push-notifications/sending-notifications/#additional-security), we might need to maintain this library even further by improving code quality, adding proper tests/mocks, use Tesla instead of Poison or abandon it and write a from scratch module in `ex-api`.**
+
 
 _Some tests may fail because the library doesn't mock API calls but executes them with incorrect tokens instead_
 
