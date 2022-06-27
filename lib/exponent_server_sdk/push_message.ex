@@ -14,7 +14,8 @@ defmodule ExponentServerSdk.PushMessage do
             priority: "default",
             sound: "default",
             badge: nil,
-            channelId: nil
+            channelId: nil,
+            categoryId: nil
 
   @typedoc """
       https://docs.expo.io/versions/v29.0.0/guides/push-notifications#message-format
@@ -127,7 +128,8 @@ defmodule ExponentServerSdk.PushMessage do
           priority: String.t(),
           sound: String.t() | nil,
           badge: integer,
-          channelId: String.t() | nil
+          channelId: String.t() | nil,
+          categoryId: String.t() | nil
         }
 
   @doc """
