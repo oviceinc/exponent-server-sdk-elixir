@@ -40,4 +40,94 @@ defmodule ExponentServerSdk.ParserTest do
 
     assert {:ok, expected} == parse_list(response)
   end
+
+  @messages [
+    %{
+      body: "You got your first message",
+      title: "Pushed!",
+      to: "ExponentPushToken[XXXXXX-XXXXXXX-XXXXXXX-XXX-XXXXXXXXX]"
+    },
+    %{
+      body: "You got your second message",
+      title: "Pushed Again!",
+      to: "ExponentPushToken[YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY]"
+    }
+  ]
+
+  test ".put_missing_expo_push_token should add expo_push_token when individual messages has errors " do
+    result = [
+      %{
+        "details" => %{
+          "error" => "DeviceNotRegistered",
+          "fault" => "developer"
+        },
+        "message" => "The recipient device is not registered with FCM.",
+        "status" => "error"
+      },
+      %{
+        "details" => %{
+          "error" => "DeviceNotRegistered",
+          "expoPushToken" => "ExponentPushToken[YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY]"
+        },
+        "message" =>
+          "\"ExponentPushToken[YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY]\" is not a registered push notification recipient",
+        "status" => "error"
+      }
+    ]
+
+    assert put_missing_expo_push_token(result, @messages) == [
+             %{
+               "details" => %{
+                 "error" => "DeviceNotRegistered",
+                 "fault" => "developer",
+                 "expoPushToken" => "ExponentPushToken[XXXXXX-XXXXXXX-XXXXXXX-XXX-XXXXXXXXX]"
+               },
+               "message" => "The recipient device is not registered with FCM.",
+               "status" => "error"
+             },
+             %{
+               "details" => %{
+                 "error" => "DeviceNotRegistered",
+                 "expoPushToken" => "ExponentPushToken[YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY]"
+               },
+               "message" =>
+                 "\"ExponentPushToken[YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY]\" is not a registered push notification recipient",
+               "status" => "error"
+             }
+           ]
+  end
+
+  test ".put_missing_expo_push_token should not fail when details is missing from individual messages errors" do
+    result = [
+      %{
+        "message" => "The recipient device is not registered with FCM.",
+        "status" => "error"
+      },
+      %{
+        "message" =>
+          "\"ExponentPushToken[YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY]\" is not a registered push notification recipient",
+        "status" => "error"
+      }
+    ]
+
+    assert put_missing_expo_push_token(result, @messages) == result
+  end
+
+  test ".put_missing_expo_push_token should return exact same error when request fails" do
+    result = [
+      %{
+        "message" => "\"[0].to\" is required.",
+        "code" => "VALIDATION_ERROR",
+        "isTransient" => false
+      }
+    ]
+
+    assert put_missing_expo_push_token(result, @messages) == [
+             %{
+               "message" => "\"[0].to\" is required.",
+               "code" => "VALIDATION_ERROR",
+               "isTransient" => false
+             }
+           ]
+  end
 end
