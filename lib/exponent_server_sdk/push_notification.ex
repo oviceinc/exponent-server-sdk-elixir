@@ -47,20 +47,10 @@ defmodule ExponentServerSdk.PushNotification do
     |> Parser.parse_list(messages)
   end
 
-  # def push_messages_list([]), do: []
-
-  # @spec push_messages_list([map()]) :: Parser.success() | Parser.error()
-  # def push_messages_list([head | tail]) do
-  #   current_message = PushNotification.post!("send", head) |> Parser.parse_list()
-  #   [current_message | push_messages_list(tail)]
-  # end
-
   @doc """
   Send the get notification receipts request when using a list of ids
   """
-  @spec get_receipts(list()) :: Parser.success() | Parser.error() | boolean
-  def get_receipts([]), do: true
-
+  @spec get_receipts(list()) :: Parser.success() | Parser.error()
   def get_receipts(ids) when is_list(ids) do
     ids
     |> PushMessage.create_receipt_id_list()
