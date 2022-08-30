@@ -27,7 +27,7 @@ defmodule ExponentServerSdk.PushNotification do
   Send the push notification request when using a single message map
   """
   @spec push(map()) :: Parser.success() | Parser.error()
-  def push(message) do
+  def push(message) when is_map(message) do
     message
     |> PushMessage.create()
 
