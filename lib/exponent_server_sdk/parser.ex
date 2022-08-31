@@ -44,11 +44,27 @@ defmodule ExponentServerSdk.Parser do
       iex> return_value
       {:ok, [%{"id" => "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX", "status" => "ok"}, %{"id" => "YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY", "status" => "ok"}]}
   """
-  @spec parse_list(HTTPoison.Response.t()) :: success_list | error
-  def parse_list(response) do
+  @spec parse_list(HTTPoison.Response.t(), [map()] | []) :: success_list | error
+  def parse_list(response, messages \\ []) do
     handle_errors(response, fn body ->
       {:ok, json} = Poison.decode(body)
+
       json["data"]
+      |> put_missing_expo_push_token(messages)
+    end)
+  end
+
+  @spec put_missing_expo_push_token([map()], [map()] | []) :: [any()]
+  def put_missing_expo_push_token(response, messages \\ []) when is_list(response) do
+    response
+    |> Enum.with_index()
+    |> Enum.map(fn {res, index} ->
+      if res["status"] == "error" and res["details"]["error"] == "DeviceNotRegistered" and
+           is_nil(res["details"]["expoPushToken"]) do
+        put_in(res, ["details", "expoPushToken"], Enum.at(messages, index)[:to])
+      else
+        res
+      end
     end)
   end
 
