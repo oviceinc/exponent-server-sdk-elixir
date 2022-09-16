@@ -5,7 +5,7 @@ defmodule ExponentServerSdk.Mixfile do
     [
       app: :exponent_server_sdk,
       version: "0.2.0",
-      elixir: "~> 1.13.0",
+      elixir: "~> 1.13",
       name: "ExponentServerSdk",
       description: "Exponent Push Notification API library for Elixir",
       source_url: "https://github.com/rdrop/exponent-server-sdk-elixir",
