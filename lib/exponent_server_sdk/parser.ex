@@ -61,7 +61,11 @@ defmodule ExponentServerSdk.Parser do
     |> Enum.map(fn {res, index} ->
       if res["status"] == "error" and res["details"]["error"] == "DeviceNotRegistered" and
            is_nil(res["details"]["expoPushToken"]) do
-        put_in(res, ["details", "expoPushToken"], Enum.at(messages, index)[:to])
+        put_in(
+          res,
+          ["details", "expoPushToken"],
+          Enum.at(messages, index)[:to] || Enum.at(messages, index)["to"]
+        )
       else
         res
       end
